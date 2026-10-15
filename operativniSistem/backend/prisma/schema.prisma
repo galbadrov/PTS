@@ -1,0 +1,48 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../generated/prisma"
+  runtime             = "nodejs"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  COTTAGE
+  BUSINESS
+}
+
+enum ListingKind {
+  SALE
+  RENT
+}
+
+model Property {
+  id          Int          @id @default(autoincrement())
+  slug        String       @unique
+  title       String
+  location    String
+  region      String
+  price       Int
+  area        Float
+  rooms       Float
+  year        Int
+  type        PropertyType
+  listingKind ListingKind  @map("listing_kind")
+  description String       @db.Text
+  image       String       @db.Text
+  featured    Boolean      @default(false)
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([listingKind])
+  @@index([type])
+  @@index([region])
+  @@index([createdAt])
+  @@map("properties")
+}
